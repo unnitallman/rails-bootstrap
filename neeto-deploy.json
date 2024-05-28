@@ -1,0 +1,95 @@
+{
+  "nixpacks": {
+    "build": {
+      "dependsOn": [
+        "install",
+        "node:install"
+      ],
+      "cmds": [
+        "bundle exec rake assets:precompile"
+      ]
+    },
+    "install": {
+      "dependsOn": [
+        "setup"
+      ],
+      "cmds": [
+        "bundle install"
+      ],
+      "onlyIncludeFiles": [
+        "Gemfile",
+        "Gemfile.lock"
+      ],
+      "cacheDirectories": [
+        "/root/.bundle/cache"
+      ],
+      "paths": [
+        "/usr/local/rvm/rubies/2.4.1/bin",
+        "/usr/local/rvm/gems/2.4.1/bin",
+        "/usr/local/rvm/gems/2.4.1@global/bin"
+      ]
+    },
+    "node:install": {
+      "dependsOn": [
+        "setup"
+      ],
+      "cmds": [
+        "npm i"
+      ],
+      "cacheDirectories": [
+        "/root/.npm"
+      ],
+      "paths": [
+        "/app/node_modules/.bin"
+      ]
+    },
+    "node:setup": {
+      "nixPkgs": [
+        "nodejs_18",
+        "npm-9_x"
+      ],
+      "nixOverlays": [
+        "https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz"
+      ],
+      "nixpkgsArchive": "bf744fe90419885eefced41b3e5ae442d732712d"
+    },
+    "release": {
+      "dependsOn": [
+        "setup",
+        "install",
+        "build"
+      ],
+      "cmds": [
+        "bundle exec rake db:migrate"
+      ]
+    },
+    "setup": {
+      "aptPkgs": [
+        "procps",
+        "git",
+        "curl",
+        "autoconf",
+        "bison",
+        "build-essential",
+        "libssl-dev",
+        "libyaml-dev",
+        "libreadline6-dev",
+        "zlib1g-dev",
+        "libncurses5-dev",
+        "libffi-dev",
+        "libgdbm6",
+        "libgdbm-dev",
+        "libdb-dev"
+      ],
+      "cmds": [
+        "curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash -s stable && printf '\\neval \"$(~/.rbenv/bin/rbenv init -)\"' >> /root/.profile && . /root/.profile && rbenv install 2.4.1 && rbenv global 2.4.1 && gem install bundler:1.14.6"
+      ],
+      "onlyIncludeFiles": [
+
+      ],
+      "paths": [
+        "$HOME/.rbenv/bin"
+      ]
+    }
+  }
+}
